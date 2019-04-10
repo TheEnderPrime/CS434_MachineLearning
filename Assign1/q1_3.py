@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
-#python q1_2.py housing_train.txt housing_test.txt
+#python q1_3.py housing_train.txt housing_test.txt
 
 import sys
 import numpy as np
 
-
 # - - - - - Housing Train - - - - -
+
 
 X = []
 Y = []
@@ -14,7 +14,6 @@ Y = []
 with open(sys.argv[1]) as housing_train:
     
     X = np.loadtxt(housing_train, usecols=(0,1,2,3,4,5,6,7,8,9,10,11,12))
-    X = np.insert(X, 0, 1, axis=1)
 
 with open(sys.argv[1]) as housing_train:
     Y = np.loadtxt(housing_train, usecols=(13))
@@ -46,7 +45,6 @@ Y = []
 with open(sys.argv[2]) as housing_test:
     
     X = np.loadtxt(housing_test, usecols=(0,1,2,3,4,5,6,7,8,9,10,11,12))
-    X = np.insert(X, 0, 1, axis=1)
 
 with open(sys.argv[2]) as housing_test:
     Y = np.loadtxt(housing_test, usecols=(13))
