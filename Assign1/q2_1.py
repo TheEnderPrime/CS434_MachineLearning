@@ -17,8 +17,22 @@ def getXY(file):
 
     return np.matrix(X), np.array(Y)
 
-#def plotlines(trainingAccuracy, testingAccuracy):
 
+def plotResults(trainingAccuracy, testingAccuracy):
+    plt.plot()
+    plt.title()
+    plt.xlabel()
+    plt.ylabel()
+    plot.legend()
+    plt.show()
+
+#def plotGraph(trainASE, testASE, xaxis):
+#    plt.plot(xaxis,trainASE,'r--',xaxis,testASE,'b--')
+#    plt.legend(['Training ASE','TestingASE'])
+#    plt.xlabel('# of random variables')
+#   plt.ylabel('Average Squared Error')
+#    plt.title('ASE of Training & Testing with additional d random variables')
+#    plt.show()    
 
 class LogisticRegression:
     def __init__(self,train,test,learnRate):
@@ -32,7 +46,7 @@ class LogisticRegression:
     def train(self):
         X = self.trainX
         Y = self.trainY
-        epsilon = 5000
+        epsilon = 3000
         normGradient = epsilon + 1
         # while until some gradient or a # of iterations
         while ( normGradient >= epsilon ): 
@@ -57,9 +71,24 @@ class LogisticRegression:
             self.getAccuracy()
     
     def getAccuracy(self): #gets accuracy for plotting later 
+        trainedCorrect = 0
+        testedCorrect = 0
+
+        for i in range(self.trainX.shape[0]):
+            Xi = np.array(self.trainX[i,:])[0]
+            prediction = float(1 / (1 + mpmath.exp(-1*np.dot(self.w, Xi))))
+            if(prediction == self.trainY[i]):
+                trainedCorrect += 1
+        self.trainingAccuracy.append(trainedCorrect/self.trainY.shape[0])
+
+        for i in range(self.testX.shape[0]):
+            Xi = np.array(self.testX[i,:])[0]
+            prediction = float(1 / (1 + mpmath.exp(-1*np.dot(self.w, Xi))))
+            if(prediction == self.testY[i]):
+                trainedCorrect += 1
         # this should run through the prediction with the new weights
         # if this prediction equals training or testing Ys then added ++ to a variable
-        # self.testAccuracy.append(testCorrect/self.trainY.shape[0])  
+        self.testingAccuracy.append(testedCorrect/self.testY.shape[0])  
         print("gettingAccuracy:")
 
 if __name__ == "__main__":
@@ -69,5 +98,7 @@ if __name__ == "__main__":
 
     regressionModel = LogisticRegression((trainX, trainY), (testX, testY), learningRate)
     regressionModel.train()
+
+    print(regressionModel.w)
 
     #plotResults(model.trainingAccuracy, model.testingAccuracy)
