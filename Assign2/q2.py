@@ -7,6 +7,7 @@ from numpy import genfromtxt
 TREE_DEPTH = 1
 ABSOLUTES = [-1.0, 1.0]
 
+# Decides next left and right split is best
 def getBestSplit(data):
     bestIndex, bestValue, bestScore, bestGroups = 100, 100, 100, None
 
@@ -18,6 +19,7 @@ def getBestSplit(data):
                 bestIndex, bestValue, bestScore, bestGroups = i, row[i], gini, groups
     return {"index": bestIndex, "value": bestValue, "groups": bestGroups, "infoGain": bestScore}
 
+# Splits data based on gini calculation
 def split_Data(index, value, data):
     left, right = list(), list()
     for row in data:
@@ -27,6 +29,7 @@ def split_Data(index, value, data):
             right.append(row)
     return left, right
 
+# Computes Gini Calculation
 def giniCalculation(sections):
     gini = 0.0
     for value in ABSOLUTES: 
@@ -38,11 +41,12 @@ def giniCalculation(sections):
             gini += (ratio * (1.0 - ratio))
         return gini
 
-#Majority Calculation
+# Majority Calculation
 def setMajorityClass(section):
 	majority = [row[-1] for row in section]
 	return max(set(majority), key=majority.count)
 
+# Recursively Builds Tree, depthMAX uses TREE_DEPTH for either Stump or d
 def buildTree(node, depthTracker, depthMAX, sizeMIN):
     left, right = node["groups"]
     del(node["groups"])
@@ -67,6 +71,7 @@ def buildTree(node, depthTracker, depthMAX, sizeMIN):
         node["right"] = getBestSplit(right)
         buildTree(node["right"], depthTracker + 1, depthMAX, sizeMIN)
 
+# Makes a prediction for Left Or Right
 def leftOrRight(treeBranch, row):
     if row[treeBranch["index"]] < treeBranch["value"]:
         if isinstance(treeBranch["left"], dict):
@@ -79,6 +84,7 @@ def leftOrRight(treeBranch, row):
         else:
             return treeBranch["right"]
 
+# Prints values for each branch of the tree 
 def printTree(treeBranch, depth = 0):
     #treeBranch: The decision tree node
     #depth: Current depth
@@ -98,6 +104,7 @@ def giniGainPrint(treeBranch, depth=0):
 		giniGainPrint(treeBranch["left"], depth + 1)
 		giniGainPrint(treeBranch["right"], depth + 1)
 
+# Calculates Probability between Guesses vs Correct Choices
 def errorCalculation(tree, data):
     correct = 0
     for row in data:
@@ -106,6 +113,7 @@ def errorCalculation(tree, data):
             correct += 1
     return 1 - (float(correct) / len(data))
 
+# Prints Out The Tree, Gain, and Errors
 def print_Results(tree, normalized_testing, normalized_training):
     printTree(tree)
     giniGainPrint(tree)
@@ -116,8 +124,8 @@ def print_Results(tree, normalized_testing, normalized_training):
 
 if __name__ == '__main__':
     # get dataset for training and testing data
-    testing_data = genfromtxt('knn_test.csv', delimiter=',')
-    training_data = genfromtxt('knn_train.csv', delimiter=',')
+    testing_data = genfromtxt(sys.argv[2], delimiter=',')
+    training_data = genfromtxt(sys.argv[1], delimiter=',')
     try:
         TREE_DEPTH = int(sys.argv[3])
     except: 
