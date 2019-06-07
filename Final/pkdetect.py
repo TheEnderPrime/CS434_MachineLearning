@@ -7,12 +7,51 @@ import pandas
 from sklearn import tree
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+from sklearn.tree import DecisionTreeClassifier as decTreeClass
 import random
 mp.use('Agg')
 
+class modelAgg:
+	def __init__(self):
+		self.models = []
+	def add(self, model):
+		self.models.append(model)
+	def predict(self, file_predict):
+		preds[]
+		for model in self.models:
+			p = model.predict(file_predict)
+			preds.append(p)
+		probPreds = []
+		for instance in range(len(preds[0])):
+			prob = sum([preds[i][instance] for i in range(len(preds))] / len(preds)
+			probPreds.append(prob)
+	return probPreds
 
-def decision_tree():
-
+def decision_tree(tData, vData):
+	print('training on a decision tree...')
+	(trainF, TrainL) = tData
+	(validateF, validateL) = vData
+		
+	def buildIt(feat, lables, depth)
+		clf_ent = DecisionTreeClassifier(criterion="entropy",max_depth=d)
+		clf_ent.fit(features,labels)
+		return clf_ent
+		
+	minD, maxD, = 1,12 #experiment with depths?
+	print("Trying trees from depth {} to {}".format(minD,maxD))
+		
+	treeDataData = modelAgg()
+	for depth in range(minD, maxD+1):
+		treeData = buildIt(trainF, trainL, depth)	
+		trainPred = treeData.predict(trainF)
+		trainAcc = sum([1 if(trainL[i]==p) else 0 for i,p in enumerate(trainPred)])/len(trainL)
+		validatePred treeData.predict(validateF)
+		validateAcc =sum([1 if(validateL[i]==p) else 0 for i,p in enumerate(validatePred)])/len(validateL)
+		print('Decision Tree: Accuracy with d={}: (t:{:.4f}), (v:{:.4f})'.format(d, trainAcc, validateAcc))
+		treeDataData.add(treeData)
+	
+	return treeDataData
+		
 
 def logistic_regression(training, validation):
     print('Logistic Regression')
