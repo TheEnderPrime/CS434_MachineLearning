@@ -9,6 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier as decTreeClass
 import random
+from joblib import dump, load
 mp.use('Agg')
 
 class modelAgg:
@@ -73,7 +74,8 @@ def logistic_regression(training, validation):
 
     models = ModelClass()
     for i in range(5):
-        logReg = LogisticRegression(penalty='l2', solver='newton-cg', max_iter=200, fit_intercept=True)
+        logReg = LogisticRegression(
+            penalty='l2', solver='newton-cg', max_iter=200, fit_intercept=True)
         logReg.fit(trainingFeatures, trainingLabels)
 
         trainingPredictions = logReg.predict(trainingFeatures)
@@ -86,7 +88,7 @@ def logistic_regression(training, validation):
 
         print('Logistic Regression (Attempt {}): Accuracy: (t:{:.4f}), (v:{:.4f})'.format(
             i, trainingAccuracy, validationAccuracy))
-        
+
         models.add(logReg)
     print('-logistic regression finished-')
     return models
@@ -99,64 +101,86 @@ class ModelClass:
     def __init__(self):
         self.models = []
 
-    def add(self,model):
+    def add(self, model):
         self.models.append(model)
 
-    def predict(self,file_predict):
+    def predict(self, file_predict):
         preds = []
         for model in self.models:
             p = model.predict(file_predict)
             preds.append(p)
-        
+
         probability_predictions = []
         for instance in range(len(preds[0])):
-            probability = sum([preds[i][instance] for i in range(len(preds))]) / len(preds)
+            probability = sum([preds[i][instance]for i in range(len(preds))]) / len(preds)
             probability_predictions.append(probability)
 
         return probability_predictions
+
+
+def load_features_for_testing(testingData):
+    dataframe = pandas.read_csv(testingData, sep='\t', encoding='utf-8')
+    dataframe = dataframe.fillna(0.)
+    data = dataframe.values
+
+    testingId = data[:, 0]
+    testingFeatures = data[:, 1:]
+    testingFeatures = testingFeatures.astype('float64')
+
+    return (testingFeatures, testingId)
 
 
 def load_features(filename, validation=0., testing=False):
     dataframe = pandas.read_csv(filename, sep='\t', encoding='utf-8')
     dataframe = dataframe.fillna(0.)
     data = dataframe.values
-    if(not testing):
-        np.random.shuffle(data)
+    
+    np.random.shuffle(data)
 
-    if(testing):
-        testing_id = data[:, 0]
-        testing_features = data[:, 1:]
-        testing_features = testing_features.astype('float64')
+    num_for_validation = int(validation * dataframe.shape[0])
+    training_features = data[num_for_validation:, 2:]
+    validation_features = data[:num_for_validation, 2:]
+    training_labels = data[num_for_validation:, 1]
+    validation_labels = data[:num_for_validation, 1]
+    training_features = training_features.astype('float64')
+    validation_features = validation_features.astype('float64')
+    training_labels = training_labels.astype('int')
+    validation_labels = validation_labels.astype('int')
 
-        return (testing_features, testing_id)
+    if(validation > 0):
+        return (training_features, training_labels), (validation_features, validation_labels)
     else:
-        num_for_validation = int(validation * dataframe.shape[0])
-        training_features = data[num_for_validation:, 2:]
-        validation_features = data[:num_for_validation, 2:]
-        training_labels = data[num_for_validation:, 1]
-        validation_labels = data[:num_for_validation, 1]
-        training_features = training_features.astype('float64')
-        validation_features = validation_features.astype('float64')
-        training_labels = training_labels.astype('int')
-        validation_labels = validation_labels.astype('int')
-
-        if(validation > 0):
-            return (training_features, training_labels), (validation_features, validation_labels)
-        else:
-            return (training_features, training_labels)
+        return (training_features, training_labels)
 
 
 def main():
     # Load in data
     random.seed()
     print("Files Loading")
-    major_features, major_labels = load_features(
-        'data/feature103_Train.txt', validation=0.2)
+    major_features, major_labels = load_features('data/feature103_Train.txt', validation=0.2)
     #all_features = load_features('featuresall_train.txt', 1053)
     print("All Files Loaded")
-    logistic_regression(major_features, major_labels)
+    LogRegModel = logistic_regression(major_features, major_labels)
+
     #decision_tree(major_features, 10)
 
+    print("Dumping Models To File")
+    dump(LogRegModel, "logreg_model")
+
+    print("Testing and Predictions For Logrithmic Regression")
+    logRegTesting = load_features_for_testing('data/feature103_Train.txt')
+    
+    (features,ids) = logRegTesting
+    model = load('logreg_model')
+    
+    scalar = StandardScaler()
+    scalar.fit(features)
+    features = scalar.transform(features)
+
+    predictions = model.predict(features)
+    with open('logreg_predictions_103','w+') as f:
+        for i,prediction in enumerate(predictions):
+            f.write('{},{}\n'.format(ids[i],prediction))
 
 if __name__ == "__main__":
     main()
