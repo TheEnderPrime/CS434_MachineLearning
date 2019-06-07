@@ -53,6 +53,7 @@ def decision_tree(tData, vData):
 	return treeDataData
 		
 
+
 def logistic_regression(training, validation):
     print('Logistic Regression')
 
@@ -70,12 +71,49 @@ def logistic_regression(training, validation):
 
     print('-running algorithm-')
 
+    models = ModelClass()
     for i in range(5):
+        logReg = LogisticRegression(penalty='l2', solver='newton-cg', max_iter=200, fit_intercept=True)
+        logReg.fit(trainingFeatures, trainingLabels)
+
+        trainingPredictions = logReg.predict(trainingFeatures)
+        trainingAccuracy = sum([1 if(trainingLabels[i] == p) else 0 for i, p in enumerate(
+            trainingPredictions)])/len(trainingLabels)
+
+        validationPredictions = logReg.predict(validationFeatures)
+        validationAccuracy = sum([1 if(validationLabels[i] == p) else 0 for i, p in enumerate(
+            validationPredictions)])/len(validationLabels)
+
+        print('Logistic Regression (Attempt {}): Accuracy: (t:{:.4f}), (v:{:.4f})'.format(
+            i, trainingAccuracy, validationAccuracy))
         
-    
+        models.add(logReg)
+    print('-logistic regression finished-')
+    return models
 
 
-def something_else():
+# def something_else():
+
+
+class ModelClass:
+    def __init__(self):
+        self.models = []
+
+    def add(self,model):
+        self.models.append(model)
+
+    def predict(self,file_predict):
+        preds = []
+        for model in self.models:
+            p = model.predict(file_predict)
+            preds.append(p)
+        
+        probability_predictions = []
+        for instance in range(len(preds[0])):
+            probability = sum([preds[i][instance] for i in range(len(preds))]) / len(preds)
+            probability_predictions.append(probability)
+
+        return probability_predictions
 
 
 def load_features(filename, validation=0., testing=False):
@@ -112,9 +150,11 @@ def main():
     # Load in data
     random.seed()
     print("Files Loading")
-    major_features = load_features('feature103_Train.txt', 103)
-    all_features = load_features('featuresall_train.txt', 1053)
+    major_features, major_labels = load_features(
+        'data/feature103_Train.txt', validation=0.2)
+    #all_features = load_features('featuresall_train.txt', 1053)
     print("All Files Loaded")
+    logistic_regression(major_features, major_labels)
     #decision_tree(major_features, 10)
 
 
