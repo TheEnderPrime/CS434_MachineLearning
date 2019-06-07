@@ -3,45 +3,71 @@ import numpy as np
 import math
 import matplotlib as mp
 import matplotlib.pyplot as plt
+import pandas
 from sklearn import tree
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
 import random
-mp.use('Agg') 
+mp.use('Agg')
 
 
 def decision_tree():
 
-def logistic_regression():
+
+def logistic_regression(training, validation):
+    print('Logistic Regression')
+
+    (trainingFeatures, trainingLabels) = training
+    (validationFeatures, validationLabels) = validation
+
+    print('-normalizing features-')
+
+    scalar = StandardScaler()
+
+    scalar.fit(trainingFeatures)
+    trainingFeatures = scalar.transform(trainingFeatures)
+    scalar.fit(validationFeatures)
+    validationFeatures = scalar.transform(validationFeatures)
+
+    print('-running algorithm-')
+
+    for i in range(5):
+        
+    
+
 
 def something_else():
 
 
-def load_features(file_name, data_length):
-    classes, ids = [], []
-    f = open(file_name, 'r')
-    features = []
+def load_features(filename, validation=0., testing=False):
+    dataframe = pandas.read_csv(filename, sep='\t', encoding='utf-8')
+    dataframe = dataframe.fillna(0.)
+    data = dataframe.values
+    if(not testing):
+        np.random.shuffle(data)
 
-    # Skip header line 
-    f.readline()
+    if(testing):
+        testing_id = data[:, 0]
+        testing_features = data[:, 1:]
+        testing_features = testing_features.astype('float64')
 
-    while True:
-        # Read in id and class
-        line = f.readline()
-        if not line:
-            break
+        return (testing_features, testing_id)
+    else:
+        num_for_validation = int(validation * dataframe.shape[0])
+        training_features = data[num_for_validation:, 2:]
+        validation_features = data[:num_for_validation, 2:]
+        training_labels = data[num_for_validation:, 1]
+        validation_labels = data[:num_for_validation, 1]
+        training_features = training_features.astype('float64')
+        validation_features = validation_features.astype('float64')
+        training_labels = training_labels.astype('int')
+        validation_labels = validation_labels.astype('int')
 
-        line = line.strip('\n').split('\t')
-        features.append([float(i) for i in line[2:]])
-        ids.append(line[0])
-        classes.append(int(line[1]))
+        if(validation > 0):
+            return (training_features, training_labels), (validation_features, validation_labels)
+        else:
+            return (training_features, training_labels)
 
-    f.close()
-
-    # Reformat data
-    data = np.array(features)
-    data = np.append(data, np.array([classes]).T, axis=1)
-    data = np.append(data, np.array([ids]).T, axis=1)
-    print (data)
-    return data
 
 def main():
     # Load in data
