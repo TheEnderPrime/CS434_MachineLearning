@@ -95,9 +95,6 @@ def logistic_regression(training, validation):
     return models
 
 
-# def something_else():
-
-
 class ModelClass:
     def __init__(self):
         self.models = []
@@ -108,6 +105,7 @@ class ModelClass:
     def predict(self, file_predict):
         preds = []
         for model in self.models:
+            print("----------", file_predict.shape[1])
             p = model.predict(file_predict)
             preds.append(p)
 
@@ -125,7 +123,7 @@ def load_features_for_testing(testingData):
     data = dataframe.values
 
     testingId = data[:, 0]
-    testingFeatures = data[:, 1:]
+    testingFeatures = data[:, 2:]
     testingFeatures = testingFeatures.astype('float64')
 
     return (testingFeatures, testingId)
@@ -153,36 +151,42 @@ def load_features(filename, validation=0., testing=False):
     else:
         return (training_features, training_labels)
 
-
-def main():
-    # Load in data
-    random.seed()
-    print("Files Loading")
-    major_features, major_labels = load_features('data/feature103_Train.txt', validation=0.2)
-    #all_features = load_features('featuresall_train.txt', 1053)
-    print("All Files Loaded")
-    LogRegModel = logistic_regression(major_features, major_labels)
-	
-	
-    #decision_tree(major_features, 10)
-
-    print("Dumping Models To File")
-    dump(LogRegModel, "logreg_model")
-
-    print("Testing and Predictions For Logrithmic Regression")
+def test(modelName, outputName):
     logRegTesting = load_features_for_testing('data/feature103_Train.txt')
     
     (features,ids) = logRegTesting
-    model = load('logreg_model')
+    model = load(modelName)
     
     scalar = StandardScaler()
     scalar.fit(features)
     features = scalar.transform(features)
-
+    
     predictions = model.predict(features)
-    with open('logreg_predictions_103','w+') as f:
+    with open(outputName,'w+') as f:
         for i,prediction in enumerate(predictions):
             f.write('{},{}\n'.format(ids[i],prediction))
+
+def main():
+    # Load in data
+    random.seed()
+
+    print("Files Loading")
+    training_103, validation_103 = load_features('data/feature103_Train.txt', validation=0.2)
+    training_all, validation_all = load_features('data/featuresall_train.txt', 1053)
+    
+    print("All Files Loaded")
+    LogRegModel_103 = logistic_regression(training_103, validation_103)
+    LogRegModel_all = logistic_regression(training_all, validation_all)
+	
+    #decision_tree(major_features, 10)
+
+    print("Dumping Models To File")
+    dump(LogRegModel_103, "logreg_model_103")
+    dump(LogRegModel_all, "logreg_model_all")
+
+    print("Testing and Predictions For Logrithmic Regression")
+    test("logreg_model_103", 'logreg_predictions_103')
+    test("logreg_model_all", 'logreg_predictions_all')
 			
 	
 
