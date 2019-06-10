@@ -18,22 +18,23 @@ class modelAgg:
 	def add(self, model):
 		self.models.append(model)
 	def predict(self, file_predict):
-		preds[]
+		preds = []
 		for model in self.models:
 			p = model.predict(file_predict)
 			preds.append(p)
 		probPreds = []
 		for instance in range(len(preds[0])):
-			prob = sum([preds[i][instance] for i in range(len(preds))] / len(preds)
+			prob = sum([preds[i][instance] for i in range(len(preds))]) / len(preds)
 			probPreds.append(prob)
-	return probPreds
+		
+		return probPreds
 
 def decision_tree(tData, vData):
 	print('training on a decision tree...')
 	(trainF, TrainL) = tData
 	(validateF, validateL) = vData
 		
-	def buildIt(feat, lables, depth)
+	def buildIt(feat, lables, depth):
 		clf_ent = DecisionTreeClassifier(criterion="entropy",max_depth=d)
 		clf_ent.fit(features,labels)
 		return clf_ent
@@ -46,7 +47,7 @@ def decision_tree(tData, vData):
 		treeData = buildIt(trainF, trainL, depth)	
 		trainPred = treeData.predict(trainF)
 		trainAcc = sum([1 if(trainL[i]==p) else 0 for i,p in enumerate(trainPred)])/len(trainL)
-		validatePred treeData.predict(validateF)
+		validatePred = treeData.predict(validateF)
 		validateAcc =sum([1 if(validateL[i]==p) else 0 for i,p in enumerate(validatePred)])/len(validateL)
 		print('Decision Tree: Accuracy with d={}: (t:{:.4f}), (v:{:.4f})'.format(d, trainAcc, validateAcc))
 		treeDataData.add(treeData)
@@ -161,7 +162,8 @@ def main():
     #all_features = load_features('featuresall_train.txt', 1053)
     print("All Files Loaded")
     LogRegModel = logistic_regression(major_features, major_labels)
-
+	
+	
     #decision_tree(major_features, 10)
 
     print("Dumping Models To File")
@@ -181,6 +183,8 @@ def main():
     with open('logreg_predictions_103','w+') as f:
         for i,prediction in enumerate(predictions):
             f.write('{},{}\n'.format(ids[i],prediction))
+			
+	
 
 if __name__ == "__main__":
     main()
