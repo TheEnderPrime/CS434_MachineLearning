@@ -105,7 +105,6 @@ class ModelClass:
     def predict(self, file_predict):
         preds = []
         for model in self.models:
-            print("----------", file_predict.shape[1])
             p = model.predict(file_predict)
             preds.append(p)
 
@@ -151,8 +150,8 @@ def load_features(filename, validation=0., testing=False):
     else:
         return (training_features, training_labels)
 
-def test(modelName, outputName):
-    logRegTesting = load_features_for_testing('data/feature103_Train.txt')
+def test(inputName, modelName, outputName):
+    logRegTesting = load_features_for_testing(inputName)
     
     (features,ids) = logRegTesting
     model = load(modelName)
@@ -172,7 +171,7 @@ def main():
 
     print("Files Loading")
     training_103, validation_103 = load_features('data/feature103_Train.txt', validation=0.2)
-    training_all, validation_all = load_features('data/featuresall_train.txt', 1053)
+    training_all, validation_all = load_features('data/featuresall_train.txt', validation=0.2)
     
     print("All Files Loaded")
     LogRegModel_103 = logistic_regression(training_103, validation_103)
@@ -185,8 +184,8 @@ def main():
     dump(LogRegModel_all, "logreg_model_all")
 
     print("Testing and Predictions For Logrithmic Regression")
-    test("logreg_model_103", 'logreg_predictions_103')
-    test("logreg_model_all", 'logreg_predictions_all')
+    test('data/feature103_Train.txt', "logreg_model_103", 'logreg_predictions_103')
+    test('data/featuresall_train.txt', "logreg_model_all", 'logreg_predictions_all')
 			
 	
 
