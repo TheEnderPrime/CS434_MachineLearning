@@ -173,7 +173,7 @@ def main():
     print("Decision Tree : 103 Train Data")	
     DecTree_103 = decision_tree(training_103, validation_103)
     print("Decision Tree : All Train Data")
-	DecTree_all = decision_tree(training_all, validation_all)
+    DecTree_all = decision_tree(training_all, validation_all)
 	
     print("Logistic Regression : 103 Train Data")
     LogRegModel_103 = logistic_regression(training_103, validation_103)
@@ -182,8 +182,8 @@ def main():
 	
 	
     print("Dumping Models To File")
-    #dump(LogRegModel_103, "logreg_model_103")
-    #dump(LogRegModel_all, "logreg_model_all")
+    dump(LogRegModel_103, "logreg_model_103")
+    dump(LogRegModel_all, "logreg_model_all")
 
     dump(DecTree_103, "DecTree_model_103")
     dump(DecTree_all, "DecTree_model_all")
