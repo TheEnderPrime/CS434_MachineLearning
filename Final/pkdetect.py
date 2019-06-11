@@ -54,8 +54,6 @@ def decision_tree(tData, vData):
 	
 	return treeDataData
 		
-
-
 def logistic_regression(training, validation):
     print('Logistic Regression')
 
@@ -94,7 +92,6 @@ def logistic_regression(training, validation):
     print('-logistic regression finished-')
     return models
 
-
 class ModelClass:
     def __init__(self):
         self.models = []
@@ -115,7 +112,6 @@ class ModelClass:
 
         return probability_predictions
 
-
 def load_features_for_testing(testingData):
     dataframe = pandas.read_csv(testingData, sep='\t', encoding='utf-8')
     dataframe = dataframe.fillna(0.)
@@ -126,7 +122,6 @@ def load_features_for_testing(testingData):
     testingFeatures = testingFeatures.astype('float64')
 
     return (testingFeatures, testingId)
-
 
 def load_features(filename, validation=0., testing=False):
     dataframe = pandas.read_csv(filename, sep='\t', encoding='utf-8')
@@ -173,18 +168,19 @@ def main():
     training_103, validation_103 = load_features('data/feature103_Train.txt', validation=0.2)
     training_all, validation_all = load_features('data/featuresall_train.txt', validation=0.2) 
     print("All Files Loaded")
-	
-    print("Training...")
-    #LogRegModel_103 = logistic_regression(training_103, validation_103)
-    #LogRegModel_all = logistic_regression(training_all, validation_all)
-	
-	
-    DecTree_103 = decision_tree(training_103, validation_103)
-    DecTree_all = decision_tree(training_all, validation_all)
-	
-	
-    #decision_tree(major_features, 10)
 
+    print("Training...")
+    print("Decision Tree : 103 Train Data")	
+    DecTree_103 = decision_tree(training_103, validation_103)
+    print("Decision Tree : All Train Data")
+	DecTree_all = decision_tree(training_all, validation_all)
+	
+    print("Logistic Regression : 103 Train Data")
+    LogRegModel_103 = logistic_regression(training_103, validation_103)
+    print("Logistic Regression : All Train Data")
+    LogRegModel_all = logistic_regression(training_all, validation_all)
+	
+	
     print("Dumping Models To File")
     #dump(LogRegModel_103, "logreg_model_103")
     #dump(LogRegModel_all, "logreg_model_all")
@@ -193,8 +189,8 @@ def main():
     dump(DecTree_all, "DecTree_model_all")
 
     print("Testing and Predictions For Logrithmic Regression")
-    #test('data/feature103_Train.txt', "logreg_model_103", 'logreg_predictions_103')
-    #test('data/featuresall_train.txt', "logreg_model_all", 'logreg_predictions_all')
+    test('data/features103_test.txt', "logreg_model_103", 'features103_pred1')
+    test('data/featuresall_test.txt', "logreg_model_all", 'featuresall_pred1')
 			
     test('data/features103_test.txt', "DecTree_model_103", 'DecTree_predictions_103')
     test('data/featuresall_test.txt', "DecTree_model_all", 'DecTree_predictions_all')
