@@ -54,8 +54,6 @@ def decision_tree(tData, vData):
 	
 	return treeDataData
 		
-
-
 def logistic_regression(training, validation):
     print('Logistic Regression')
 
@@ -94,7 +92,6 @@ def logistic_regression(training, validation):
     print('-logistic regression finished-')
     return models
 
-
 class ModelClass:
     def __init__(self):
         self.models = []
@@ -115,18 +112,16 @@ class ModelClass:
 
         return probability_predictions
 
-
 def load_features_for_testing(testingData):
     dataframe = pandas.read_csv(testingData, sep='\t', encoding='utf-8')
     dataframe = dataframe.fillna(0.)
     data = dataframe.values
 
     testingId = data[:, 0]
-    testingFeatures = data[:, 2:]
+    testingFeatures = data[:, 1:]
     testingFeatures = testingFeatures.astype('float64')
 
     return (testingFeatures, testingId)
-
 
 def load_features(filename, validation=0., testing=False):
     dataframe = pandas.read_csv(filename, sep='\t', encoding='utf-8')
@@ -174,7 +169,9 @@ def main():
     training_all, validation_all = load_features('data/featuresall_train.txt', validation=0.2)
     
     print("All Files Loaded")
+    print("Logistic Regression : 103 Train Data")
     LogRegModel_103 = logistic_regression(training_103, validation_103)
+    print("Logistic Regression : All Train Data")
     LogRegModel_all = logistic_regression(training_all, validation_all)
 	
     #decision_tree(major_features, 10)
@@ -184,8 +181,8 @@ def main():
     dump(LogRegModel_all, "logreg_model_all")
 
     print("Testing and Predictions For Logrithmic Regression")
-    test('data/feature103_Train.txt', "logreg_model_103", 'logreg_predictions_103')
-    test('data/featuresall_train.txt', "logreg_model_all", 'logreg_predictions_all')
+    test('data/features103_test.txt', "logreg_model_103", 'features103_pred1')
+    test('data/featuresall_test.txt', "logreg_model_all", 'featuresall_pred1')
 			
 	
 
