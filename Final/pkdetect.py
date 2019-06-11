@@ -31,12 +31,12 @@ class modelAgg:
 
 def decision_tree(tData, vData):
 	print('training on a decision tree...')
-	(trainF, TrainL) = tData
+	(trainF, trainL) = tData
 	(validateF, validateL) = vData
 		
 	def buildIt(feat, lables, depth):
-		clf_ent = DecisionTreeClassifier(criterion="entropy",max_depth=d)
-		clf_ent.fit(features,labels)
+		clf_ent = decTreeClass(criterion="entropy",max_depth=depth)
+		clf_ent.fit(feat,lables)
 		return clf_ent
 		
 	minD, maxD, = 1,12 #experiment with depths?
@@ -49,7 +49,7 @@ def decision_tree(tData, vData):
 		trainAcc = sum([1 if(trainL[i]==p) else 0 for i,p in enumerate(trainPred)])/len(trainL)
 		validatePred = treeData.predict(validateF)
 		validateAcc =sum([1 if(validateL[i]==p) else 0 for i,p in enumerate(validatePred)])/len(validateL)
-		print('Decision Tree: Accuracy with d={}: (t:{:.4f}), (v:{:.4f})'.format(d, trainAcc, validateAcc))
+		print('Decision Tree: Accuracy with d={}: (t:{:.4f}), (v:{:.4f})'.format(depth, trainAcc, validateAcc))
 		treeDataData.add(treeData)
 	
 	return treeDataData
@@ -122,7 +122,7 @@ def load_features_for_testing(testingData):
     data = dataframe.values
 
     testingId = data[:, 0]
-    testingFeatures = data[:, 2:]
+    testingFeatures = data[:, 1:]
     testingFeatures = testingFeatures.astype('float64')
 
     return (testingFeatures, testingId)
@@ -171,22 +171,33 @@ def main():
 
     print("Files Loading")
     training_103, validation_103 = load_features('data/feature103_Train.txt', validation=0.2)
-    training_all, validation_all = load_features('data/featuresall_train.txt', validation=0.2)
-    
+    training_all, validation_all = load_features('data/featuresall_train.txt', validation=0.2) 
     print("All Files Loaded")
-    LogRegModel_103 = logistic_regression(training_103, validation_103)
-    LogRegModel_all = logistic_regression(training_all, validation_all)
+	
+    print("Training...")
+    #LogRegModel_103 = logistic_regression(training_103, validation_103)
+    #LogRegModel_all = logistic_regression(training_all, validation_all)
+	
+	
+    DecTree_103 = decision_tree(training_103, validation_103)
+    DecTree_all = decision_tree(training_all, validation_all)
+	
 	
     #decision_tree(major_features, 10)
 
     print("Dumping Models To File")
-    dump(LogRegModel_103, "logreg_model_103")
-    dump(LogRegModel_all, "logreg_model_all")
+    #dump(LogRegModel_103, "logreg_model_103")
+    #dump(LogRegModel_all, "logreg_model_all")
+
+    dump(DecTree_103, "DecTree_model_103")
+    dump(DecTree_all, "DecTree_model_all")
 
     print("Testing and Predictions For Logrithmic Regression")
-    test('data/feature103_Train.txt', "logreg_model_103", 'logreg_predictions_103')
-    test('data/featuresall_train.txt', "logreg_model_all", 'logreg_predictions_all')
+    #test('data/feature103_Train.txt', "logreg_model_103", 'logreg_predictions_103')
+    #test('data/featuresall_train.txt', "logreg_model_all", 'logreg_predictions_all')
 			
+    test('data/features103_test.txt', "DecTree_model_103", 'DecTree_predictions_103')
+    test('data/featuresall_test.txt', "DecTree_model_all", 'DecTree_predictions_all')
 	
 
 if __name__ == "__main__":
