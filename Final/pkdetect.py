@@ -29,7 +29,7 @@ class modelAgg:
 		
 		return probPreds
 
-def decision_tree(tData, vData):
+def decision_tree(tData, vData, x):
 	print('training on a decision tree...')
 	(trainF, trainL) = tData
 	(validateF, validateL) = vData
@@ -39,7 +39,7 @@ def decision_tree(tData, vData):
 		clf_ent.fit(feat,lables)
 		return clf_ent
 		
-	minD, maxD, = 1,12 #experiment with depths?
+	minD, maxD, = 1,x #experiment with depths?
 	print("Trying trees from depth {} to {}".format(minD,maxD))
 		
 	treeDataData = modelAgg()
@@ -170,10 +170,18 @@ def main():
     print("All Files Loaded")
 
     print("Training...")
-    print("Decision Tree : 103 Train Data")	
-    DecTree_103 = decision_tree(training_103, validation_103)
-    print("Decision Tree : All Train Data")
-    DecTree_all = decision_tree(training_all, validation_all)
+	
+    print("Decision Tree for max depth of 5: 103 Train Data")	
+    DecTree_A_103 = decision_tree(training_103, validation_103, 5)
+    print("Decision Tree for max depth of 5: All Train Data")
+    DecTree_A_all = decision_tree(training_all, validation_all, 5)
+	
+	
+    print("Decision Tree for max depth of 10: 103 Train Data")	
+    DecTree_B_103 = decision_tree(training_103, validation_103, 10)
+    print("Decision Tree for max depth of 10: All Train Data")
+    DecTree_B_all = decision_tree(training_all, validation_all, 10)
+
 	
     print("Logistic Regression : 103 Train Data")
     LogRegModel_103 = logistic_regression(training_103, validation_103)
@@ -185,16 +193,22 @@ def main():
     dump(LogRegModel_103, "logreg_model_103")
     dump(LogRegModel_all, "logreg_model_all")
 
-    dump(DecTree_103, "DecTree_model_103")
-    dump(DecTree_all, "DecTree_model_all")
+    dump(DecTree_A_103, "DecTree_A_model_103")
+    dump(DecTree_A_all, "DecTree_A_model_all")
 
+    dump(DecTree_B_103, "DecTree_B_model_103")
+    dump(DecTree_B_all, "DecTree_B_model_all")
+
+	
     print("Testing and Predictions For Logrithmic Regression")
     test('data/features103_test.txt', "logreg_model_103", 'features103_pred1')
     test('data/featuresall_test.txt', "logreg_model_all", 'featuresall_pred1')
 			
-    test('data/features103_test.txt', "DecTree_model_103", 'DecTree_predictions_103')
-    test('data/featuresall_test.txt', "DecTree_model_all", 'DecTree_predictions_all')
-	
+    test('data/features103_test.txt', "DecTree_A_model_103", 'features103_pred2')
+    test('data/featuresall_test.txt', "DecTree_A_model_all", 'featuresall_pred2')
+
+    test('data/features103_test.txt', "DecTree_B_model_103", 'features103_pred3')
+    test('data/featuresall_test.txt', "DecTree_B_model_all", 'featuresall_pred3')
 
 if __name__ == "__main__":
     main()
