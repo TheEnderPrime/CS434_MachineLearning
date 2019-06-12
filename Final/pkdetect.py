@@ -171,10 +171,10 @@ def main():
 
     print("Training...")
 	
-    print("Decision Tree for max depth of 5: 103 Train Data")	
-    DecTree_A_103 = decision_tree(training_103, validation_103, 5)
-    print("Decision Tree for max depth of 5: All Train Data")
-    DecTree_A_all = decision_tree(training_all, validation_all, 5)
+    print("Decision Tree for max depth of 15: 103 Train Data")	
+    DecTree_A_103 = decision_tree(training_103, validation_103, 15)
+    print("Decision Tree for max depth of 15: All Train Data")
+    DecTree_A_all = decision_tree(training_all, validation_all, 15)
 	
 	
     print("Decision Tree for max depth of 10: 103 Train Data")	
